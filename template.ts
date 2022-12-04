@@ -1,4 +1,5 @@
-export const template = (day: number) => `import { timer, getSplittedDataFromFile } from '../utilities.ts';
+export const template = (day: number) =>
+	`import { timer, getSplittedDataFromFile } from '../utilities.ts';
 
 timer.start();
 
