@@ -1,5 +1,6 @@
 import { parse } from "https://deno.land/std@0.167.0/flags/mod.ts";
-import { input, confirm } from "https://deno.land/x/inquirer/mod.ts";
+import { input, confirm } from "https://deno.land/x/inquirer@v0.0.4/mod.ts";
+import { exec, OutputMode } from "https://deno.land/x/exec@0.0.5/mod.ts";
 
 // @deno-types="https://deno.land/x/chalk_deno@v4.1.1-deno/index.d.ts"
 import chalk from "https://deno.land/x/chalk_deno@v4.1.1-deno/source/index.js";
@@ -66,20 +67,34 @@ if (!session || args.s) {
 
 let aocFolder = localStorage.getItem("folder");
 if (!aocFolder || args.folder) {
-  console.log();
+  console.log(`AOC folder: ${aocFolder}`);
 
-  const isCurrentFolder = await confirm({ message: `Is the current folder '${Deno.cwd()}' correct?` });
-
-  console.log("isCurrentFolder", isCurrentFolder);
-  if (isCurrentFolder) {
+  if (await confirm({ message: `Is the current folder '${Deno.cwd()}' correct?` })) {
     aocFolder = Deno.cwd();
     localStorage.setItem("folder", aocFolder);
   }
 }
 
 const event = args.y ?? 2022;
-const day = args.d;
+const day = args._.pop() as number | undefined;
 
 if (args.i && aocFolder && session && day) {
   await getProblemInput(event, day);
+} else if (session && day && aocFolder) {
+  if (Deno.cwd().includes(aocFolder)) {
+    const file = `${aocFolder}/ts/${event}/${day}.ts`;
+
+    const response = await exec(`deno run --allow-read ${file}`, { output: OutputMode.Capture });
+
+    if (response.status.success) {
+      console.log(
+        response.output
+          .replace("p1", chalk.green("p1"))
+          .replace("p2", chalk.green("p2"))
+          .replace("Elapsed Time:", chalk.yellow("Elapsed Time:"))
+      );
+    } else {
+      console.log(chalk.red(`Error when running '${day}.ts'`));
+    }
+  }
 }
