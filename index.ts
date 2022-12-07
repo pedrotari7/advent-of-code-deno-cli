@@ -45,7 +45,7 @@ const getProblemInput = async (event: number, n: number): Promise<void> => {
 
   const text = template(n);
 
-  const codeFilePath = `ts/${event}/${n}.ts`;
+  const codeFilePath = `${aocFolder}/ts/${event}/${n}.ts`;
   if (!(await exists(codeFilePath))) {
     await Deno.writeTextFile(codeFilePath, text, { create: true });
     console.log(chalk.green(`Typescript file ${codeFilePath} generated!`));
@@ -84,7 +84,7 @@ if (args.i && aocFolder && session && day) {
   if (Deno.cwd().includes(aocFolder)) {
     const file = `${aocFolder}/ts/${event}/${day}.ts`;
 
-    const response = await exec(`deno run --allow-read ${file}`, { output: OutputMode.Capture });
+    const response = await exec(`deno run --allow-read ${file}`, { output: OutputMode.Tee });
 
     if (response.status.success) {
       console.log(
