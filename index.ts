@@ -56,7 +56,7 @@ const getLeaderboardInfo = async (event: number, id: number) => {
     const info: Leaderboard = await response.json();
 
     const users = Object.values(info.members)
-      .filter((u) => u.local_score)
+      .filter(u => u.local_score)
       .sort((a, b) => a.local_score - b.local_score);
 
     for (const [index, user] of users.entries()) {
