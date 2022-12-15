@@ -1,11 +1,11 @@
-import { parse } from "https://deno.land/std@0.167.0/flags/mod.ts";
-import { input, confirm } from "https://deno.land/x/inquirer@v0.0.4/mod.ts";
-import { exec, OutputMode } from "https://deno.land/x/exec@0.0.5/mod.ts";
-import { writeAllSync } from "https://deno.land/std@0.167.0/streams/write_all.ts";
+import { parse } from 'https://deno.land/std@0.167.0/flags/mod.ts';
+import { input, confirm } from 'https://deno.land/x/inquirer@v0.0.4/mod.ts';
+import { exec, OutputMode } from 'https://deno.land/x/exec@0.0.5/mod.ts';
+import { writeAllSync } from 'https://deno.land/std@0.167.0/streams/write_all.ts';
 
 // @deno-types="https://deno.land/x/chalk_deno@v4.1.1-deno/index.d.ts"
-import chalk from "https://deno.land/x/chalk_deno@v4.1.1-deno/source/index.js";
-import { template } from "./template.ts";
+import chalk from 'https://deno.land/x/chalk_deno@v4.1.1-deno/source/index.js';
+import { template } from './template.ts';
 
 interface Leaderboard {
   members: Record<string, User>;
@@ -31,7 +31,7 @@ interface User {
       >;
 }
 
-const write = (str: string | number | unknown, end = " ") =>
+const write = (str: string | number | unknown, end = ' ') =>
   writeAllSync(Deno.stdout, new TextEncoder().encode(`${str}` + end));
 
 const exists = async (filename: string): Promise<boolean> => {
@@ -60,26 +60,26 @@ const getLeaderboardInfo = async (event: number, id: number) => {
       .sort((a, b) => a.local_score - b.local_score);
 
     for (const [index, user] of users.entries()) {
-      write(`${users.length - index}`.padStart(3, " "));
-      write(`${user.local_score}`.padStart(6, " "));
+      write(`${users.length - index}`.padStart(3, ' '));
+      write(`${user.local_score}`.padStart(6, ' '));
 
       for (let d = 1; d < 25; d++) {
         if (user.completion_day_level[d]) {
           if (user.completion_day_level[d][2]) {
-            write(chalk.yellow("*"));
+            write(chalk.yellow('*'));
           } else {
-            write(chalk.blue("*"));
+            write(chalk.blue('*'));
           }
         } else {
-          write(" ");
+          write(' ');
         }
       }
 
-      const name = user.name ?? `anon #${user.id}`;
-      const userName = user.global_score ? `${name} (${user.global_score})` : user.name;
+      const name = (user.name === username ? chalk.yellow(user.name) : user.name) ?? `anon #${user.id}`;
+      const userName = user.global_score ? `${name} (${user.global_score})` : name;
 
       write(userName);
-      write("\n", "");
+      write('\n', '');
     }
   }
 };
@@ -102,7 +102,7 @@ const getProblemInput = async (event: number, n: number): Promise<void> => {
 
       console.log(chalk.green(`Data saved in ${filePath}`));
     } else {
-      console.log(chalk.red("Error on fetching input:"), response.status, response.statusText);
+      console.log(chalk.red('Error on fetching input:'), response.status, response.statusText);
     }
   } else {
     console.log(chalk.red(`Input file ${filePath} already exits!`));
@@ -121,22 +121,35 @@ const getProblemInput = async (event: number, n: number): Promise<void> => {
 
 const args = parse(Deno.args);
 
-let session = localStorage.getItem("session");
+let session = localStorage.getItem('session');
 if (!session || args.s) {
-  console.log("Session cookie not available");
-  session = await input({ message: "Enter the session cookie:", default: "" });
+  console.log('Session cookie not available');
+  session = await input({ message: 'Enter the session cookie:', default: '' });
   if (session) {
-    localStorage.setItem("session", session);
+    localStorage.setItem('session', session);
   }
 }
 
-let aocFolder = localStorage.getItem("folder");
+let aocFolder = localStorage.getItem('folder');
 if (!aocFolder || args.folder) {
   console.log(`AOC folder: ${aocFolder}`);
 
   if (await confirm({ message: `Is the current folder '${Deno.cwd()}' correct?` })) {
     aocFolder = Deno.cwd();
-    localStorage.setItem("folder", aocFolder);
+    localStorage.setItem('folder', aocFolder);
+  }
+}
+
+let username = localStorage.getItem('username');
+if (!username || args.u) {
+  if (typeof args.u === 'string') {
+    username = args.u as string;
+  } else {
+    console.log('Current user not selected');
+    username = await input({ message: 'Enter the user name:', default: '' });
+  }
+  if (username) {
+    localStorage.setItem('username', username);
   }
 }
 
@@ -154,9 +167,9 @@ if (args.i && aocFolder && session && day) {
     if (response.status.success) {
       console.log(
         response.output
-          .replace("p1", chalk.green("p1"))
-          .replace("p2", chalk.green("p2"))
-          .replace("Elapsed Time:", chalk.yellow("Elapsed Time:"))
+          .replace('p1', chalk.green('p1'))
+          .replace('p2', chalk.green('p2'))
+          .replace('Elapsed Time:', chalk.yellow('Elapsed Time:'))
       );
     } else {
       console.log(chalk.red(`Error when running '${day}.ts'`));

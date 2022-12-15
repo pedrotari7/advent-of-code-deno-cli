@@ -1,16 +1,16 @@
 {
-	"compilerOptions": {
-		"allowJs": true,
-		"lib": ["deno.aoc"],
-		"strict": true
-	},
-	"fmt": {
-		"options": {
-			"useTabs": true,
-			"lineWidth": 120,
-			"indentWidth": 1,
-			"singleQuote": true,
-			"proseWrap": "preserve"
-		}
-	}
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true
+  },
+  "fmt": {
+    "options": {
+      "useTabs": true,
+      "lineWidth": 120,
+      "indentWidth": 1,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  }
 }
