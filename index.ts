@@ -47,6 +47,13 @@ const exists = async (filename: string): Promise<boolean> => {
   }
 };
 
+const runTests = async () => {
+  const cwd = Deno.cwd();
+  Deno.chdir(`${aocFolder}/ts`);
+  await exec(`deno test --allow-read --allow-run ${aocFolder}/ts/test.ts`, { output: OutputMode.StdOut });
+  Deno.chdir(cwd);
+};
+
 const getLeaderboardInfo = async (event: number, id: number) => {
   const response = await fetch(`https://adventofcode.com/${event}/leaderboard/private/view/${id}.json`, {
     headers: { Cookie: `session=${session}` },
@@ -187,4 +194,8 @@ const leadName: string = args.l;
 
 if (leadName && session && event) {
   await getLeaderboardInfo(event, Leaderboards[leadName] ?? Leaderboards.spotify);
+}
+
+if (args.tests && aocFolder) {
+  await runTests();
 }
