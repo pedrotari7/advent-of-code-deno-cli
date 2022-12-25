@@ -82,7 +82,7 @@ const getLeaderboardInfo = async (event: number, id: number) => {
         }
       }
 
-      const name = (user.name === username ? chalk.yellow(user.name) : user.name) ?? `anon #${user.id}`;
+      const name = (user.name === username ? chalk.green(user.name) : user.name) ?? `anon #${user.id}`;
       const userName = user.global_score ? `${name} (${user.global_score})` : name;
 
       write(userName);
